@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>404 Not Found</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background: black;
+      font-family: sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      pointer-events: none;
+    }
+
+    .overlay h1 {
+      margin: 0;
+      font-size: 8vw;
+      letter-spacing: 0.1em;
+    }
+
+    .overlay p {
+      margin: 0.5em 0 0;
+      font-size: 2.5vw;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <div class="overlay">
+    <h1>404</h1>
+    <p>Page Not Found</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    const STAR_COUNT = 800;
+    let width, height, cx, cy;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      cx = width / 2;
+      cy = height / 2;
+    }
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < STAR_COUNT; i++) {
+        stars.push({
+          x: Math.random() * width - cx,
+          y: Math.random() * height - cy,
+          z: Math.random() * width
+        });
+      }
+    }
+
+    function animate() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, width, height);
+
+      for (let i = 0; i < STAR_COUNT; i++) {
+        const s = stars[i];
+        s.z -= 2;
+        if (s.z <= 0) {
+          s.x = Math.random() * width - cx;
+          s.y = Math.random() * height - cy;
+          s.z = width;
+        }
+
+        const px = (s.x / s.z) * cx + cx;
+        const py = (s.y / s.z) * cy + cy;
+        const radius = (1 - s.z / width) * 2;
+        
+        ctx.beginPath();
+        ctx.arc(px, py, radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', () => {
+      resize();
+      initStars();
+    });
+
+    // kick it off
+    resize();
+    initStars();
+    animate();
+  </script>
+</body>
+</html>
